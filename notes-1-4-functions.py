@@ -1,6 +1,6 @@
 # Functions
 # Author: Amanda
-# 26t February 2024
+# 26th February 2024
 
 # Create a function called say_hello
     # Its going to print "Hello"
