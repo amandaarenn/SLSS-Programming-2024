@@ -42,3 +42,11 @@ for info in person:
 # Iterate over the perssons list
 for info in person:
     print (info)
+
+for key in person_dict:
+    print (key)
+
+# Pythonic way of iterating over a dictionary
+for key, value in person_dict.items():
+    print (key, value, sep = ":")
+
