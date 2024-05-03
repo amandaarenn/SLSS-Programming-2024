@@ -49,8 +49,6 @@ class Snow(pg.sprite.Sprite):
         if self.rect.y > HEIGHT:
             self.rect.y -= 720
 
-           
-        
         
 def main():
     pg.init()
