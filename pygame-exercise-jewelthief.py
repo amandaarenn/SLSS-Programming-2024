@@ -1,3 +1,4 @@
+import random 
 import pygame as pg
 
 # --CONSTANTS--
@@ -14,12 +15,13 @@ WIDTH = 1280  # Pixels
 HEIGHT = 720
 SCREEN_SIZE = (WIDTH, HEIGHT)
 
-NUM_COINS = 50
+NUM_COINS = 100
 
 class Player(pg.sprite.Sprite):
     # TODO: Change Mario image depending on facing direction
     def __init__(self):
         super().__init__()
+        
         self.image = pg.image.load("./Images/mario.webp")
 
         self.rect = self.image.get_rect()
@@ -32,9 +34,14 @@ class Player(pg.sprite.Sprite):
 class Coin(pg.sprite.Sprite):
     def __init__(self):
         super().__init__()
+        
         self.image = pg.image.load("./Images/coin.png")
 
         self.rect = self.image.get_rect()
+
+        # Randomize initial location
+        self.rect.centerx = random.randrange(0, WIDTH - self.rect.width)
+        self.rect.centery = random.randrange(0, HEIGHT - self.rect.height)
 
 
 def start():
@@ -49,6 +56,9 @@ def start():
     done = False
     clock = pg.time.Clock()
 
+    score = 0
+
+
     # All sprites go in this sprite Group
     all_sprites = pg.sprite.Group()
 
@@ -57,19 +67,17 @@ def start():
 
     for _ in range(NUM_COINS):
         coin = Coin()
+        
+        all_sprites.add(coin_sprites)
         coin_sprites.add(coin)
-
-    all_sprites.add(coin_sprites)
-    coin_sprites.add(coin)
 
     #Create a player and store it in a variable
     player = Player ()
 
     all_sprites.add(player)
 
-    pg.display.set_caption("Jewel Thief Clone")
+    pg.display.set_caption("Jewel Thief Clone (Don't sue us Nintendo)")
 
-    pg.display.set_caption("<WINDOW TITLE HERE>")
 
     # --Main Loop--
     while not done:
@@ -85,20 +93,19 @@ def start():
         # Get a list of ALL coin_sprites that collide
         # with the player sprite
         # For every coin that colllides, print "gyatt"
-        coins_collided = pg.sprite.spritecollide(
-            player,
-            coin_sprites,
-            False
-        )
+        coins_collided = pg.sprite.spritecollide(player, coin_sprites, True)
 
         for coin in coins_collided:
-            print(f"gyatt at {coin.rect.x}, {coin.rect.y}")
+            # increase the score by 1 
+            score += 1
+
+            print(score)
 
         # --- Draw items
         screen.fill (WHITE)
 
         # --- Draw items
-        screen.fill(BLACK)
+        screen.fill(WHITE)
 
         all_sprites.draw(screen)
 
