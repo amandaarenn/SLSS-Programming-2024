@@ -16,6 +16,17 @@ HEIGHT = 720
 SCREEN_SIZE = (WIDTH, HEIGHT)
 
 NUM_COINS = 100
+NUM_ENEMIES = 5
+
+# load img
+BLOOPER_IMAGE = pg.image.load("./Images/blooper.png")
+
+# scale img
+BLOOPER_IMAGE = pg.transform.scale(
+    BLOOPER_IMAGE, (BLOOPER_IMAGE.get_width() // 5, BLOOPER_IMAGE.get_height() // 5)
+)    
+
+
 
 class Player(pg.sprite.Sprite):
     # TODO: Change Mario image depending on facing direction
@@ -44,11 +55,47 @@ class Coin(pg.sprite.Sprite):
         self.rect.centery = random.randrange(0, HEIGHT - self.rect.height)
 
 
+class Blooper (pg.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        
+        self.image = BLOOPER_IMAGE
+        self.image.set_colorkey(WHITE)
+        self.rect = self.image.get_rect()
+
+        
+        self.rect.x = random.randrange(0, WIDTH - self.rect.width)
+        self.rect.y = random.randrange(0, HEIGHT - self.rect.height)
+
+        self.vel_x = random.choice([-6, -5, -4, 4, 5, 6])
+        self.vel_y = random.choice([-6, -5, -4, 4, 5, 6])
+
+    
+    def update(self):
+        "Move the blooper and bounce it off the edge of the window"
+        self.rect.x += self.vel_x
+        self.rect.y += self.vel_y
+
+        # Bounce
+        if self.rect.left < 0:
+            self.rect_left = 0
+            self.vel_x *= -1
+        if self.rect.right > WIDTH:
+            self.rect_right = WIDTH
+            self.vel_x *= -1
+        if self.rect.top < 0:
+            self.rect_top = 0
+            self.vel_y *= -1
+        if self.rect.bottom > HEIGHT:
+            self.rect_bottom = HEIGHT
+            self.vel_y *= -1
+
+
+
 def start():
     """Environment Setup and Game Loop"""
 
     pg.init()
-
     pg.mouse.set_visible(False)
 
     # --Game State Variables--
@@ -65,6 +112,9 @@ def start():
     # Coin sprites
     coin_sprites = pg.sprite.Group()
 
+    # Blooper sprites
+    enemy_sprites = pg.sprite.Group()
+
     for _ in range(NUM_COINS):
         coin = Coin()
         
@@ -75,6 +125,11 @@ def start():
     player = Player ()
 
     all_sprites.add(player)
+
+    for _ in range(NUM_ENEMIES):
+        enemy = Blooper()
+        all_sprites.add(enemy)
+        enemy_sprites.add (enemy)
 
     pg.display.set_caption("Jewel Thief Clone (Don't sue us Nintendo)")
 
@@ -90,9 +145,6 @@ def start():
         all_sprites.update()
 
         # Collison between player and coin_sprites
-        # Get a list of ALL coin_sprites that collide
-        # with the player sprite
-        # For every coin that colllides, print "gyatt"
         coins_collided = pg.sprite.spritecollide(player, coin_sprites, True)
 
         for coin in coins_collided:
@@ -100,7 +152,17 @@ def start():
             score += 1
 
             print(score)
+    
+        # if the coin_sprites group is empty
+        # respawm al the coins 
+        if len(coin_sprites) <= 0:
+            for _ in range(NUM_COINS):
+                coin = Coin()
+                all_sprites.add(coin)
+                coin_sprites.add(coin)
 
+
+    
         # --- Draw items
         screen.fill (WHITE)
 

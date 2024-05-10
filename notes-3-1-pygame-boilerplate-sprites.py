@@ -79,7 +79,7 @@ def start():
 
     # Add the DVD Logo object to the group of sprites
     for _ in range(NUM_LOGOS):
-        all_sprites.add(Dvdlogo())
+        all_sprites.add(dvd-logo(1).png)
 
     # --MAIN LOOP--
     while not done:
