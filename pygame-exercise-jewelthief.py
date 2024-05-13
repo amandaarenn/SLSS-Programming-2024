@@ -23,7 +23,7 @@ BLOOPER_IMAGE = pg.image.load("./Images/blooper.png")
 
 # scale img
 BLOOPER_IMAGE = pg.transform.scale(
-    BLOOPER_IMAGE, (BLOOPER_IMAGE.get_width() // 5, BLOOPER_IMAGE.get_height() // 5)
+    BLOOPER_IMAGE, (BLOOPER_IMAGE.get_width() // 8, BLOOPER_IMAGE.get_height() // 8)
 )    
 
 
@@ -36,6 +36,8 @@ class Player(pg.sprite.Sprite):
         self.image = pg.image.load("./Images/mario.webp")
 
         self.rect = self.image.get_rect()
+
+        self.lives_remaining = 9
 
     def update(self):
         """Updates the location of sprite to the mouse cursor"""
@@ -105,6 +107,7 @@ def start():
 
     score = 0
 
+    font = pg.font.SysFont("Futura", 24)
 
     # All sprites go in this sprite Group
     all_sprites = pg.sprite.Group()
@@ -161,15 +164,38 @@ def start():
                 all_sprites.add(coin)
                 coin_sprites.add(coin)
 
+        # TODO: detect collisions with enemies
+        enemies_collided = pg.sprite.spritecollide(
+            player, 
+            enemy_sprites, 
+            False
+        )
 
-    
-        # --- Draw items
-        screen.fill (WHITE)
+        #TODO:iterate through enemies collided to notify in console
+        for enemy in enemies_collided:
+            
+            # Decrease players life by one life per second
+            player.lives_remaining -= (1 / 60)
+            
+            #Print the players current lives remaining
+            print (f"Lives:{int(player.lives_remaining)}")
+
+
 
         # --- Draw items
         screen.fill(WHITE)
 
         all_sprites.draw(screen)
+
+        # Create an image that has the score in it
+        score_image = font.render(f"Score: {score}", True, GREEN)
+        lives_image = font.render(
+            f"Lives Remeaning: {int(player.lives_remaining)}", True, GREEN
+        )
+    
+        # Draw/blit the image on the screen
+        screen.blit(score_image, (5,5))
+        screen.blit(lives_image, (5, 35))
 
         # Update the screen with anything new
         pg.display.flip()
