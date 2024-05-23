@@ -1,4 +1,5 @@
-# Shoot em up
+# pygame-example-shmup.py
+# Shoot 'em up
 
 import pygame as pg
 
@@ -12,18 +13,19 @@ GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 GRAY = (128, 128, 128)
 
-WIDTH = 720  # Pixels
+WIDTH = 720
 HEIGHT = 1000
 SCREEN_SIZE = (WIDTH, HEIGHT)
 
-#TODO:
-#    - Mouse movement 
-#    - Limit player position to the bottom 
+
 class Player(pg.sprite.Sprite):
     def __init__(self):
         super().__init__()
 
-        self.image= pg.image.load("./Images/galaga.ship.png")
+        self.image = pg.image.load("./Images/galaga_ship.png")
+        self.image = pg.transform.scale(
+            self.image, (self.image.get_width() // 2, self.image.get_height() // 2)
+        )
 
         self.rect = self.image.get_rect()
 
@@ -31,13 +33,36 @@ class Player(pg.sprite.Sprite):
         """Follow the mouse"""
         self.rect.center = pg.mouse.get_pos()
 
-#TODO:
-#    - Image - picture or pygame surface?
-#    - Spawn at the Player
-#    - Vertoca; velocity
+        # Keep it at the bottom of the screen
+        if self.rect.top < HEIGHT - 200:
+            self.rect.top = HEIGHT - 200
 
 
+# TODO: Bullets/lasers
+#      - Image - picture or pygame surface?
+#      - Spawn at the Player
+#      - Vertical velocity
+class Bullet(pg.sprite.Sprite):
+    def __init__(self, player_loc: list):
+        """
+        Params:
+            player_loc: x,y coords of centerx and top
+        """
+        super().__init__()
 
+        # Green rectangle
+        self.image = pg.Surface((10, 25))
+        self.image.fill(GREEN)
+
+        self.rect = self.image.get_rect()
+
+        # Spawn at the Player
+        self.rect.centerx = player_loc[0]
+        self.rect.bottom = player_loc[1]
+
+
+# TODO: Enemies
+#      - Move left to right to left
 
 
 def start():
@@ -53,12 +78,12 @@ def start():
     # All sprites go in this sprite Group
     all_sprites = pg.sprite.Group()
 
-    #Create the Player sprite object
+    # Create the Player sprite object
     player = Player()
 
     all_sprites.add(player)
 
-    pg.display.set_caption("Shoot em up")
+    pg.display.set_caption("Shoot 'Em Up")
 
     # --Main Loop--
     while not done:
@@ -66,6 +91,9 @@ def start():
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 done = True
+            if event.type == pg.MOUSEBUTTONDOWN:
+                bullet = Bullet((player.rect.centerx, player.rect.top))
+                all_sprites.add(bullet)
 
         # --- Update the world state
         all_sprites.update()
@@ -80,6 +108,8 @@ def start():
 
         # --- Tick the Clock
         clock.tick(60)  # 60 fps
+
+    pg.quit()
 
 
 def main():
