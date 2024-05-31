@@ -1,0 +1,49 @@
+class Snowballs (pg.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        
+        self.image = SNOWBALL_IMAGE
+        self.image.set_colorkey(BLACK)
+        self.rect = self.image.get_rect()
+
+        
+        self.rect.x = random.randrange(0, WIDTH - self.rect.width)
+        self.rect.y = random.randrange(0, HEIGHT - self.rect.height)
+
+        self.vel_x = random.choice([-6, -5, -4, 4, 5, 6])
+        self.vel_y = random.choice([-6, -5, -4, 4, 5, 6])
+
+
+
+class Snow(pg.sprite.Sprite):
+    def __init__(self, width: int):
+        """
+        Params:
+            width: width of snow in px
+        """
+        super().__init__()
+
+        self.image = pg.Surface((width, width))
+        
+        pg.draw.circle(self.image, WHITE, (width // 2, width // 2), width // 2)
+
+        self.rect = self.image.get_rect()
+        # self.vel_y = random.randint(2,10)
+        self.vel_y = 10
+        self.rect.y = random.randint(0,720)
+        print(self.rect.y)
+        # Initial coords, choose random x-coord
+        self.rect.centerx = random.randrange(0, WIDTH + 1)
+        self.rect.centery = random.randint(0,720)
+        
+    def update(self):
+        # Update the location of the DVD logo
+        #self.rect.x += self.vel_x
+        self.rect.y += self.vel_y
+        print(self.rect.y)
+
+        # Bounce if reaches bottom
+        #   if the bottom of the sprite is past the bottom of screen
+        #   convert to negative (* -1)
+        if self.rect.y > HEIGHT:
+            self.rect.y -= 720
